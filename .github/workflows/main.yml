@@ -7,22 +7,62 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Changed from ubuntu-20.04
-    timeout-minutes: 60
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          command: buildozer android debug
-          buildozer_version: stable
+          python-version: '3.10'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            zip \
+            unzip \
+            openjdk-17-jdk \
+            autoconf \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo5 \
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            ccache
+
+      - name: Install Cython and Buildozer
+        run: |
+          pip install --upgrade pip
+          pip install --upgrade cython==0.29.36
+          pip install --upgrade buildozer==1.5.0
+
+      - name: Make gradlew executable
+        run: |
+          mkdir -p ~/.buildozer/android/platform/
+          
+      - name: Build APK with Buildozer
+        run: |
+          yes | buildozer android debug
+        env:
+          ANDROID_SDK_ROOT: ~/.buildozer/android/platform/android-sdk
+          ANDROID_NDK_ROOT: ~/.buildozer/android/platform/android-ndk
+
+      - name: List bin directory
+        run: |
+          ls -la bin/ || echo "bin directory not found"
+          find . -name "*.apk" || echo "No APK found"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: videocaller-apk
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
