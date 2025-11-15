@@ -7,8 +7,8 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.0
 source.main = main.py
 
-# MINIMAL requirements that actually compile
-requirements = python3,kivy,pillow,requests
+# ONLY these packages - nothing else!
+requirements = python3,kivy,pillow
 
 # Permissions
 android.permissions = INTERNET,CAMERA,RECORD_AUDIO,ACCESS_NETWORK_STATE,WAKE_LOCK
@@ -20,7 +20,6 @@ android.ndk = 25b
 android.accept_sdk_license = True
 android.archs = arm64-v8a
 
-# Display
 orientation = portrait
 fullscreen = 0
 
