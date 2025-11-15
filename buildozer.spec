@@ -1,6 +1,7 @@
 [app]
-title = VideoCaller
-package.name = videocaller
+title = VideoReceiver
+package.name = videoreceiver
+source.main = main.py
 package.domain = org.autopick
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
